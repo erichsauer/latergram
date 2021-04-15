@@ -8,6 +8,8 @@ describe('latergram routes', () => {
     return setup(pool);
   });
 
+  afterAll(() => pool.end());
+
   it('makes the checks pass', () => {
     expect(true).toEqual(true);
   });
