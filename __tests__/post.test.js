@@ -71,4 +71,18 @@ describe('latergram routes', () => {
       userName: 'test_user',
     });
   });
+
+  it('updates a post caption by id and checks user authentication with PATCH', async () => {
+    const { body } = await request(app).patch('/api/v1/posts/1').send({
+      caption: '#latergatorgram',
+      userName: 'test_user',
+    });
+    expect(body).toEqual({
+      imageUrl: 'https://placekitten.com/',
+      caption: '#latergatorgram',
+      tags: '#yolo, #livelyfe, #nofilter',
+      id: '1',
+      userName: 'test_user',
+    });
+  });
 });
