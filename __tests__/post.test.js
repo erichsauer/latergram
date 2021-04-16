@@ -75,7 +75,6 @@ describe('latergram routes', () => {
   it('updates a post caption by id and checks user authentication with PATCH', async () => {
     const { body } = await request(app).patch('/api/v1/posts/1').send({
       caption: '#latergatorgram',
-      userName: 'test_user',
     });
     expect(body).toEqual({
       imageUrl: 'https://placekitten.com/',
@@ -83,6 +82,28 @@ describe('latergram routes', () => {
       tags: '#yolo, #livelyfe, #nofilter',
       id: '1',
       userName: 'test_user',
+    });
+  });
+
+  it('IGNORES a phony userName attempt and updates a post caption via PATCH for the current logged in user', async () => {
+    const testUserTwo = await User.insert({
+      userName: 'test_user_two',
+      photoUrl: 'https://placekitten.com/',
+    });
+    const testPostTwo = await Post.insert({
+      imageUrl: 'https://placekitten.com/',
+      caption: '#latergram-user-two',
+      tags: '#yolo, #livelyfe, #nofilter',
+      userName: testUserTwo.userName,
+    });
+    const { body } = await request(app)
+      .patch(`/api/v1/posts/${testPostTwo.id}`)
+      .send({
+        caption: '#latergatorgram',
+      });
+    expect(body).toEqual({
+      message: 'No post with id 2 found made by username: test_user!',
+      status: 500,
     });
   });
 });
