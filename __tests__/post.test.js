@@ -4,6 +4,7 @@ const request = require('supertest');
 const app = require('../lib/app');
 const User = require('../lib/models/User');
 const Post = require('../lib/models/Post');
+const { response } = require('../lib/app');
 
 jest.mock('../lib/middleware/ensureAuth.js', () => (req, res, next) => {
   req.user = {
@@ -60,5 +61,14 @@ describe('latergram routes', () => {
         userName: 'test_user',
       },
     ]);
+  });
+
+  it('gets one post by id', async () => {
+    const { body } = await request(app).get('/api/v1/posts/1');
+    expect(body).toEqual({
+      ...newPost,
+      id: '1',
+      userName: 'test_user',
+    });
   });
 });
