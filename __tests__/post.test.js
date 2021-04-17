@@ -106,4 +106,14 @@ describe('latergram routes', () => {
       status: 500,
     });
   });
+
+  it('deletes a post by id', async () => {
+    const { body } = await request(app).delete(`/api/v1/posts/${testPost.id}`);
+
+    expect(body).toEqual({
+      ...newPost,
+      id: testPost.id,
+      userName: testPost.userName,
+    });
+  });
 });
