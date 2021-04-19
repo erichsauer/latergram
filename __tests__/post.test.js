@@ -4,6 +4,7 @@ const request = require('supertest');
 const app = require('../lib/app');
 const User = require('../lib/models/User');
 const Post = require('../lib/models/Post');
+const Comment = require('../lib/models/Comment');
 const { response } = require('../lib/app');
 
 jest.mock('../lib/middleware/ensureAuth.js', () => (req, res, next) => {
@@ -115,5 +116,30 @@ describe('latergram routes', () => {
       id: testPost.id,
       userName: testPost.userName,
     });
+  });
+
+  it('gets top 10 popular posts', async () => {
+    const postArray = [];
+    for (let i = 0; i < 11; i++ ){
+      const post = await Post.insert({     
+        imageUrl: 'https://placekitten.com/',
+        caption: `${i}`,
+        tags: '#yolo, #livelyfe, #nofilter',
+        userName: 'test_user'})
+        postArray.push(post);
+    };
+    const postComment = [];
+    for (let i = 0; i < 50; i++ ){
+      const postId = Math.ceil(Math.random()*12);
+      const comment = await Comment.insert({     
+        commentBy: testUser.userName,
+        post: postId,
+        comment: 'looking good'
+    })
+    postComment.push(comment);
+  };
+    const { body } = await request(app).get('/api/v1/popular');
+    expect(body).toEqual(expect.any(Array));
+    //tested in PG admin and is working as intended
   });
 });
