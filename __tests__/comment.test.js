@@ -65,4 +65,10 @@ describe('latergram routes', () => {
     });
   });
 
+  it('deletes a comment by id', async () => {
+    const { body } = await request(app).delete(`/api/v1/comments/${testComment.id}`);
+
+    expect(body).toEqual(testComment);
+  });
+
 });
